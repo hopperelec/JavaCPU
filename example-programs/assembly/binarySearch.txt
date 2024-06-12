@@ -1,0 +1,68 @@
+# Constants
+$two 2
+$dynamicLoadSpliceMid -dynamicLoadSpliceMid
+
+# Variables
+$nextAddressIn %end
+$prevNumberIn 0
+$needle
+$spliceLow %end
+$spliceHigh
+$spliceMid
+
+# Inputting numbers
+-inputNextNumber
+    INP 1 10
+      BAD -inputNeedle # Entering a negative number progresses
+      STA $nextAddressIn
+      SUB $prevNumberIn
+      BAD -halt # 'Error' due to haystack not being sorted
+      STO $prevNumberIn
+    LDA $nextAddressIn
+      INC 1
+      STO $nextAddressIn
+    BAA -inputNextNumber
+-inputNeedle
+    INP 1 10
+      BAD -halt # 'Error' due to needle being negative
+      STO $needle
+      
+# Searching
+LDA $dynamicLoadSpliceMid
+  INC 1 # Refer to operand instead of opcode
+  STO $dynamicLoadSpliceMid
+LDA $nextAddressIn
+  STO $spliceHigh
+-searchWhile
+    # Find middle of splice
+    LDA $spliceHigh
+      SUB $spliceLow
+      BAD -halt # 'Error' due to needle not being in haystack
+      DIV $two
+      ADD $spliceLow
+      STO $spliceMid
+      STA $dynamicLoadSpliceMid
+      -dynamicLoadSpliceMid
+      LDA 0
+        # Find needle's relative direction
+        SUB $needle
+        BAC -foundNeedle
+        BAD -needleHigher
+        # 'needleLower'
+        LDA $spliceMid
+          DEC 1
+          STO $spliceHigh
+        BAA -searchWhile
+    -needleHigher
+        LDA $spliceMid
+          INC 1
+          STO $spliceLow
+    BAA -searchWhile
+      
+-foundNeedle
+    LDA $spliceMid
+      DEC %end
+      OUT 10
+
+-halt
+    HLT

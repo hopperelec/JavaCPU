@@ -1,0 +1,110 @@
+# This is quite complicated, so I've also written it in Python (bubbleSort.py) to demonstrate how it works
+
+# Constants
+$end %end
+$one 1
+$zero 0
+$dynamicLoadFirstItem -dynamicLoadFirstItem
+$dynamicLoadSecondItem -dynamicLoadSecondItem
+$dynamicLoadOutputItem -dynamicLoadOutputItem
+
+# Variables
+$isSorted
+$i
+$firstItem
+$secondItem
+$firstAddress
+$secondAddress
+$nextAddressIn %end
+
+# Inputting numbers to sort
+-inputNextNumber
+    INP 1 10
+      BAD -startSorting # Entering a negative number starts the sort
+      STA $nextAddressIn
+    LDA $nextAddressIn
+      INC 1
+      STO $nextAddressIn
+    BAA -inputNextNumber
+
+# Sorting
+-startSorting
+    LDA $dynamicLoadFirstItem
+      INC 1 # Refer to operand instead of opcode
+      STO $dynamicLoadFirstItem
+    LDA $dynamicLoadSecondItem
+      INC 1 # Refer to operand instead of opcode
+      STO $dynamicLoadSecondItem
+    -sortWhile
+        LDA $one
+          STO $isSorted
+        LDA $zero
+          STO $i
+        -sortFor
+            # Check if end of list
+            LDA $end
+              ADD $i
+              SUB $nextAddressIn
+              BAC -endSortFor
+            # If not, load addresses
+            LDA $end
+              ADD $i
+              STO $firstAddress
+              STA $dynamicLoadFirstItem
+              INC 1
+              STO $secondAddress
+              STA $dynamicLoadSecondItem
+            # We no longer need $i, so we can increment it
+            LDA $i
+              INC 1
+              STO $i
+            # Then load items stored at those addresses
+            -dynamicLoadFirstItem
+            LDA 0
+              STO $firstItem
+            -dynamicLoadSecondItem
+            LDA 0
+              STO $secondItem
+            # Now we can check if the items need swapped
+              SUB $firstItem
+              DEC 1
+              BAD -sortFor
+            # If so, swap items
+            LDA $firstItem
+              STA $secondAddress
+            LDA $secondItem
+              STA $firstAddress
+            LDA $zero
+              STO $isSorted
+            BAA -sortFor
+        -endSortFor
+            LDA $isSorted
+              SUB $one
+              BAC -startOutputting
+            BAA -sortWhile
+
+# Outputting results
+-startOutputting
+LDA $dynamicLoadOutputItem
+  INC 1 # Refer to operand instead of opcode
+  STO $dynamicLoadOutputItem
+LDA $zero
+  STO $i
+-outputNextNumber
+    LDA $end
+      ADD $i
+      SUB $nextAddressIn
+      BAC -halt
+    LDA $end
+      ADD $i
+      STA $dynamicLoadOutputItem
+    -dynamicLoadOutputItem
+    LDA 0
+      OUT 10
+    LDA $i
+      INC 1
+      STO $i
+    BAA -outputNextNumber
+
+-halt
+    HLT

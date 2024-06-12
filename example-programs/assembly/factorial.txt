@@ -1,0 +1,20 @@
+$lastValue 1
+$n 1 # The number to multiply by to get the next integer in the sequence
+
+-start
+
+# Calculate next integer in sequence
+LDA $lastValue
+MUL $n
+BAC -halt # Halt once overflowed
+OUT 10
+STO $lastValue
+
+# Increment and loop
+LDA $n
+INC 1
+STO $n
+BAA -start
+
+-halt
+HLT

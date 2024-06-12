@@ -1,0 +1,13 @@
+$currentValue 1
+$previousValue
+$temp
+
+-start
+LDA $previousValue
+OUT 10
+STO $temp
+ADD $currentValue
+STO $previousValue
+LDA $temp
+STO $currentValue
+BAA -start

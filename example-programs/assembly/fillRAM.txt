@@ -1,0 +1,15 @@
+$data 85
+$nextAddress %end
+
+-start
+LDA $data
+STA $nextAddress
+LDA $nextAddress
+OUT 2
+INC 1
+BAD -halt # Halt once overflowed
+STO $nextAddress
+BAA -start
+
+-halt
+HLT

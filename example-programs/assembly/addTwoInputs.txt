@@ -1,0 +1,7 @@
+$firstInput
+INP 1 10
+STO $firstInput
+INP 1 10
+ADD $firstInput
+OUT 10
+HLT
