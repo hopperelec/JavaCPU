@@ -1,0 +1,37 @@
+$zero 0
+$base
+$multiplicandDecrementer
+$exponent
+$exponentDecrementer
+$currValue 1
+
+INP 1 10
+STO $base
+INP 1 10
+STO $exponent
+STO $exponentDecrementer
+
+-nextMultiplicand
+LDA $currValue
+STO $multiplicandDecrementer
+LDA $exponentDecrementer
+BAC -done
+DEC 1
+STO $exponentDecrementer
+LDA $zero
+STO $currValue
+
+-decrementMultiplicand
+LDA $multiplicandDecrementer
+BAC -nextMultiplicand
+DEC 1
+STO $multiplicandDecrementer
+LDA $currValue
+ADD $base
+STO $currValue
+BAA -decrementMultiplicand
+
+-done
+LDA $currValue
+OUT 10
+HLT
