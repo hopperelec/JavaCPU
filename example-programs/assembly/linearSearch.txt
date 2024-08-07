@@ -1,0 +1,52 @@
+# Constants
+$dynamicLoad -dynamicLoad
+$end %end
+
+# Variables
+$nextAddressIn %end
+$needle
+$i
+
+# Inputting numbers
+-inputNextNumber
+    INP 1 10
+      BAD -inputNeedle # Entering a negative number progresses
+      STA $nextAddressIn
+    LDA $nextAddressIn
+      INC 1
+      STO $nextAddressIn
+    BAA -inputNextNumber
+-inputNeedle
+    INP 1 10
+      BAD -error # 'Error' due to needle being negative
+      STO $needle
+
+# Searching
+LDA $dynamicLoad
+  INC 1 # Refer to operand instead of opcode
+  STO $dynamicLoad
+
+-whileLoop
+    -dynamicLoad
+    LDA %end
+      SUB $needle
+      BAC -found
+    LDA $i
+      INC 1
+      STO $i
+      ADD $end
+      STA $dynamicLoad
+      SUB $nextAddressIn
+      BAC -notFound
+    BAA -whileLoop
+
+# Output
+-found
+    LDA $i
+      OUT 10
+    HLT
+-notFound
+    DEC 1
+    OUT 10
+-error
+    HLT
